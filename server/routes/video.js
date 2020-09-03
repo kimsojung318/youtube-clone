@@ -68,7 +68,7 @@ router.post('/thumbnail', (req, res) => {
             console.log('Screenshots taken');
             return res.json({ success: true, url: filePath, fileDuration: fileDuration })
         })
-        .on('error', function(err){
+        .on('error', function (err) {
             console.error(err);
             return res.json({ success: false, err })
         })
@@ -85,12 +85,35 @@ router.post('/thumbnail', (req, res) => {
 
 router.post('/uploadVideo', (req, res) => {
     // 비디오 정보들을 DB 저장
-    
+
     const video = new Video(req.body) // 모든 정보가 담긴다.
 
-    video.save((err, doc) =>{
-        if(err) return res.json({ success: false, err })
+    video.save((err, doc) => {
+        if (err) return res.json({ success: false, err })
         res.status(200).json({ success: true })
     })
 });
+
+router.get('/getVideos', (req, res) => {
+    // 비디오를 DB에서 가져와서 client에 전달함
+
+    // Video 컬렉션에 있는 모든 비디오를 가져온다.
+    Video.find()
+        .populate('writer') // 하지 않으면 비디오 ID만 가져오게 된다.
+        .exec((err, videos) => {
+            if (err) return res.status(400).send(err);
+            res.status(200).json({ success: true, videos })
+        })
+});
+
+router.post('/getVideoDetail', (req, res) => {
+
+    Video.findOne({ "_id": req.body.videoId })
+        .populate('writer') // 사용자의 모든 정보를 가져오기 위해 사용
+        .exec((err, VideoDetail) => {
+            if (err) return res.status(400).send(err);
+            res.status(200).json({ success: true, VideoDetail })
+        })
+});
+
 module.exports = router;
