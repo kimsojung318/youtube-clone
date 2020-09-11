@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Video } = require("../models/Video");
+const { Subscriber } = require("../models/Subscriber");
 const { auth } = require("../middleware/auth");
 const multer = require("multer");
 var ffmpeg = require("fluent-ffmpeg");
@@ -113,6 +114,31 @@ router.post('/getVideoDetail', (req, res) => {
         .exec((err, VideoDetail) => {
             if (err) return res.status(400).send(err);
             res.status(200).json({ success: true, VideoDetail })
+        })
+});
+
+router.post('/getsubscriptionVideos', (req, res) => {
+
+    // 현재 로그인된 사용자 ID를 가지고 본인이 구독한 계정을 찾는다.
+    Subscriber.find({ userFrom: req.body.userFrom })
+        .exec((err, subscriberInfo) => { // subscriberInfo : 구독한 계정 정보
+            if (err) return res.status(400).send(err);
+
+            let subscrbedUser = [];
+
+            subscriberInfo.map((subscriber, i) =>  {
+                subscrbedUser.push(subscriber.userTo);
+            });
+
+            // 찾은 구독 계정 비디오를 가져온다.
+            // 대상이 1명일 때만 "req.body.id"가 가능
+            // 대상이 다수일 경우 MongoDB의 기능인 "$in" 사용 
+            Video.find({ writer : { $in: subscrbedUser }})
+                .populate('writer')
+                .exec((err, videos) => {
+                    if(err) return res.status(400).send(err);
+                    res.status(200).json({ success: true, videos })
+                })
         })
 });
 
