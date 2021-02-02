@@ -28,7 +28,7 @@ function LandingPage() {
         var minutes = Math.floor(video.duration / 60);
         var seconds = Math.floor(video.duration - minutes * 60);
 
-        return <Col lg={6} md={8} xs={24}>
+        return <Col lg={6} md={8} xs={24} key={index}>
 
             <div style={{ position: 'relative' }}>
                 <a href={`/video/${video._id}`} >
@@ -42,7 +42,7 @@ function LandingPage() {
             <br />
             <Meta
                 avatar={ // 사용자 프로필 이미지
-                    <Avatar src={video.writer.image} />
+                    <Avatar /> /* src={video.writer.image} */
                 }
                 title={video.title}
                 description=""

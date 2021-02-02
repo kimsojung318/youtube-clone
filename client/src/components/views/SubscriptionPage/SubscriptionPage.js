@@ -47,7 +47,7 @@ function SubscriptionPage() {
             <br />
             <Meta
                 avatar={ // 사용자 프로필 이미지
-                    <Avatar src={video.writer.image} />
+                    <Avatar /> /* src={video.writer.image} */
                 }
                 title={video.title}
                 description=""
