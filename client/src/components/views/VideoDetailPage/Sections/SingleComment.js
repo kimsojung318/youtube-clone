@@ -16,7 +16,7 @@ function SingleComment(props) {
     }
 
     const onHandleChange = (event) => {
-        setCommentValue(event.currentTarget.CommentValue);
+        setCommentValue(event.currentTarget.value);
     }
 
     const onSubmit= (event) => {
@@ -32,9 +32,11 @@ function SingleComment(props) {
         Axios.post('/api/comment/saveComment', variables)
             .then(response => {
                 if(response.data.success){
-                    console.log(response.data.result);
+                    //console.log(response.data.result);
 
                     setCommentValue("");
+                    setOpenReply(false);
+                    
                     // VideoDetailPage.js Comments 수정
                     props.refreshFunction(response.data.result);
                 } else{
@@ -65,9 +67,9 @@ function SingleComment(props) {
                 <form style={{ display: 'flex' }} onSubmit={onSubmit}>
                     <TextArea
                         style={{ width: '100%', borderRadius: '5px' }}
-                        onChange={handleChange}
+                        onChange={onHandleChange}
                         value={CommentValue}
-                        placeholder="write some comments"
+                        placeholder="내용을 작성해 주세요."
                     />
                     <br />
                     <Button style={{ width: '20%', height: '52px' }} onClick={onSubmit}>Submit</Button>

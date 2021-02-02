@@ -22,7 +22,7 @@ function VideoDetailPage(props) {
                 } else {
                     alert("비디오 정보 가져오기 실패")
                 }
-            })
+            });
 
         Axios.post('/api/comment/getComments', variable)
         .then(response => {
@@ -32,13 +32,13 @@ function VideoDetailPage(props) {
             } else {
                 alert("댓글 정보 가져오기 실패")
             }
-        })
-    }, [])
+        });
+    }, []);
 
     const refreshFunction = (newComment) => {
         // concat : 기존의 배열을 수정하지 않고, 새로운 원소가 추가된 새로운 배열을 생성
         setComments(Comments.concat(newComment));
-    }
+    };
 
     if (VideoDetail.writer) {
 
