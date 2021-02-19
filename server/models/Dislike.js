@@ -17,6 +17,6 @@ const dislikeSchema = mongoose.Schema({
 }, { timestamps: true }) // 만든 일자와 업데이트 일자 표시를 위해
 
 
-const Dislike = mongoose.model('Like', dislikeSchema);
+const Dislike = mongoose.model('Dislike', dislikeSchema);
 
 module.exports = { Dislike }
