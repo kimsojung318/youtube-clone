@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Video } = require("../models/Video");
 const { Subscriber } = require("../models/Subscriber");
+const { Comment } = require("../models/Comment");
 const { auth } = require("../middleware/auth");
 const multer = require("multer");
 var ffmpeg = require("fluent-ffmpeg");
@@ -63,6 +64,7 @@ router.post('/thumbnail', (req, res) => {
             console.log('Will generate ' + filenames.join(', '))
             console.log(filenames)
 
+            // 파일 경로 저장
             filePath = "uploads/thumbnails/" + filenames[0];
         })
         .on('end', function () { // 썸네일 생성 후 무엇을 할 것인 지 정의
@@ -83,7 +85,6 @@ router.post('/thumbnail', (req, res) => {
         });
 });
 
-
 router.post('/uploadVideo', (req, res) => {
     // 비디오 정보들을 DB 저장
 
@@ -101,10 +102,33 @@ router.get('/getVideos', (req, res) => {
     // Video 컬렉션에 있는 모든 비디오를 가져온다.
     Video.find()
         .populate('writer') // 하지 않으면 비디오 ID만 가져오게 된다.
+        .sort({ "createdAt": -1 }) // 날짜 순 내림차순 정렬로 최신 댓글이 먼저 올라온다.
         .exec((err, videos) => {
             if (err) return res.status(400).send(err);
+            
+            // 총 댓글 수 구하기
+            /*videos.map((video, index) => {
+                Comment.find({ 'postId': video._id })
+                    .exec((err, comments) => {
+                        if (err) {
+                            return res.status(400).json({
+                                success: false,
+                                err
+                            });
+                        } // if
+
+                        console.log(comments.length);
+
+                        video['commentNum'] = comments.length;
+
+                        console.log("Video : " + video);
+                    }) // exec
+            }); // map
+
+            console.log("videos : " + videos);*/
+
             res.status(200).json({ success: true, videos })
-        })
+        }); // .find().exec
 });
 
 router.post('/getVideoDetail', (req, res) => {
@@ -126,20 +150,36 @@ router.post('/getsubscriptionVideos', (req, res) => {
 
             let subscrbedUser = [];
 
-            subscriberInfo.map((subscriber, i) =>  {
+            subscriberInfo.map((subscriber, i) => {
                 subscrbedUser.push(subscriber.userTo);
             });
 
             // 찾은 구독 계정 비디오를 가져온다.
             // 대상이 1명일 때만 "req.body.id"가 가능
             // 대상이 다수일 경우 MongoDB의 기능인 "$in" 사용 
-            Video.find({ writer : { $in: subscrbedUser }})
+            Video.find({ writer: { $in: subscrbedUser } })
                 .populate('writer')
                 .exec((err, videos) => {
-                    if(err) return res.status(400).send(err);
+                    if (err) return res.status(400).send(err);
                     res.status(200).json({ success: true, videos })
                 })
         })
+});
+
+router.post('/updataViews', (req, res) => { // 조회수
+    Video.findById(req.body.videoId)
+        .populate("writer")
+        .exec((err, doc) => {
+            if(err) return res.status(400).json({ success: false, err });
+            
+            doc.views++;
+
+            doc.save((err) => {
+                if(err) return res.status(400).json({ success: false, err });
+            });
+
+            res.status(200).json({ success: true, views: doc.views });
+        });
 });
 
 module.exports = router;

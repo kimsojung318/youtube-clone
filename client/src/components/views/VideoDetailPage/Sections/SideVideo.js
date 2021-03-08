@@ -15,7 +15,7 @@ function SideVideo() {
                     alert("비디오 가져오기 실패")
                 }
             })
-    }, [])
+    }, []);
 
     const renderSideVideo = sideVideo.map((video, index) => {
 

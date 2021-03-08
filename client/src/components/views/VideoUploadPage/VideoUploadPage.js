@@ -29,7 +29,7 @@ function VideoUploadPage(props) {
         { value: 2, label: "Music" },
         { value: 3, label: "Pets & Animals" },
         { value: 4, label: "Sports" },
-    ]
+    ];
 
     const onTitleChange = (e) => {
         // console.log(e)
@@ -97,7 +97,7 @@ function VideoUploadPage(props) {
             category: Category,
             duration: Duration,
             thumbnail: ThumbnailPath
-        }
+        };
 
         axios.post('/api/video/uploadVideo', variables)
             .then(response => {

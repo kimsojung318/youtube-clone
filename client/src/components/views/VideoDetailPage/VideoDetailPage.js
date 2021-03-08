@@ -10,10 +10,11 @@ function VideoDetailPage(props) {
 
     // App.js에서 path="/video/:videoId" 지정했기 때문에 불러올 수 있음
     const videoId = props.match.params.videoId;
-    const variable = { videoId: videoId }
+    const variable = { videoId: videoId };
 
     const [VideoDetail, setVideoDetail] = useState([]);
     const [Comments, setComments] = useState([]);
+    const [Views, setViews] = useState(0);
 
     useEffect(() => {
         Axios.post('/api/video/getVideoDetail', variable)
@@ -26,14 +27,23 @@ function VideoDetailPage(props) {
             });
 
         Axios.post('/api/comment/getComments', variable)
-        .then(response => {
-            if (response.data.success) {
-                setComments(response.data.comments);
-                //console.log(response.data.comments);
-            } else {
-                alert("댓글 정보 가져오기 실패")
-            }
-        });
+            .then(response => {
+                if (response.data.success) {
+                    setComments(response.data.comments);
+                    //console.log(response.data.comments);
+                } else {
+                    alert("댓글 정보 가져오기 실패")
+                }
+            });
+
+        Axios.post("/api/video/updataViews", variable)
+            .then((res) => {
+                if(res.data.success){
+                    setViews(res.data.views);
+                }else {
+                    alert("조회수 로딩 실패");
+                }
+            })
     }, []);
 
     const refreshFunction = (newComment) => {
@@ -50,7 +60,7 @@ function VideoDetailPage(props) {
                 <Col lg={18} xs={24}>
                     <div style={{ width: '100%', padding: '3rem 4rem' }}>
                         <video style={{ width: '100%' }} src={`http://localhost:5000/${VideoDetail.filePath}`} controls />
-
+                        
                         <List.Item
                             actions={[<LikeDislikes video userId={localStorage.getItem('userId')} videoId={videoId} />, subscribeButton]}
                         >
@@ -59,9 +69,8 @@ function VideoDetailPage(props) {
                                 title={VideoDetail.writer.name}
                                 description={VideoDetail.description}
                             />
-
                         </List.Item>
-
+                        <span>조회수 : </span>{Views} &nbsp;
                         {/* Comments */}
                         <Comment CommentLists={Comments} postId={videoId} refreshFunction={refreshFunction} />
 
@@ -72,7 +81,7 @@ function VideoDetailPage(props) {
                 </Col>
             </Row>
         )
-    } else{
+    } else {
         return (
             <div>
                 ...Loading

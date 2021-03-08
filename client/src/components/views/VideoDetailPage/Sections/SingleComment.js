@@ -9,7 +9,7 @@ const { TextArea } = Input;
 function SingleComment(props) {
     const user = useSelector(state => state.user);
 
-    const [OpenReply, setOpenReply] = useState(false); // 처음에는 숨김처리
+    const [OpenReply, setOpenReply] = useState(false); // 처음에는 숨김 처리
     const [CommentValue, setCommentValue] = useState("");
 
     const onClickReplyOpen = () => {
@@ -20,7 +20,7 @@ function SingleComment(props) {
         setCommentValue(event.currentTarget.value);
     }
 
-    const onSubmit= (event) => {
+    const onSubmit = (event) => {
         event.preventDefault(); 
 
         const variables = {
@@ -44,7 +44,7 @@ function SingleComment(props) {
                     alert("댓글 저장 실패");
                 }
             })
-    }
+    } // onSubmit
 
     const actions = [
         <LikeDislikes userId={localStorage.getItem('userId')} commentId={props.comment._id} />,

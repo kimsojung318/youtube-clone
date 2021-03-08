@@ -28,7 +28,7 @@ function Comment(props) {
             content: commentValue,
             writer: user.userData._id,
             postId: props.postId
-        }
+        };
 
         Axios.post('/api/comment/saveComment', variables)
             .then(response => {

@@ -9,7 +9,7 @@ const { Meta } = Card;
 
 function LandingPage() {
 
-    const [Video, setVideo] = useState([])
+    const [Video, setVideo] = useState([]);
 
     useEffect(() => {
         Axios.get('api/video/getVideos')
