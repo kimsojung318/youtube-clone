@@ -29,6 +29,7 @@ router.post('/saveComment', (req, res) => {
 router.post('/getComments', (req, res) => {
     Comment.find({ "postId" : req.body.videoId })
     .populate('writer')
+    .sort({ "createdAt": -1 }) // 날짜 순 내림차순 정렬로 최신 댓글이 먼저 올라온다.
     .exec((err, comments) => {
         if(err) return res.status(400).send(err)
         res.status(200).json({ success: true, comments })

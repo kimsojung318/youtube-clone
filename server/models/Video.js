@@ -30,7 +30,11 @@ const videoSchema = mongoose.Schema({
     },
     thumbnail: {
         type: String
+    },
+    commentNum: {
+        type: Number
     }
+    
 }, { timestamps: true }) // 만든 일자와 업데이트 일자 표시를 위해
 
 

@@ -101,13 +101,12 @@ router.get('/getVideos', (req, res) => {
 
     // Video 컬렉션에 있는 모든 비디오를 가져온다.
     Video.find()
-        .populate('writer') // 하지 않으면 비디오 ID만 가져오게 된다.
-        .sort({ "createdAt": -1 }) // 날짜 순 내림차순 정렬로 최신 댓글이 먼저 올라온다.
+        .populate('writer') // 하지 않으면 비디오 ID만 가져오게 된다.        
         .exec((err, videos) => {
             if (err) return res.status(400).send(err);
-            
+
             // 총 댓글 수 구하기
-            /*videos.map((video, index) => {
+            videos.map((video, index) => {
                 Comment.find({ 'postId': video._id })
                     .exec((err, comments) => {
                         if (err) {
@@ -115,19 +114,18 @@ router.get('/getVideos', (req, res) => {
                                 success: false,
                                 err
                             });
-                        } // if
+                        }
 
-                        console.log(comments.length);
-
-                        video['commentNum'] = comments.length;
-
-                        console.log("Video : " + video);
+                        // models/Video.js "commentNum" Schema 추가
+                        video.commentNum = comments.length;
+                        console.log("commentNum 추가 : ", video);
                     }) // exec
             }); // map
-
-            console.log("videos : " + videos);*/
-
-            res.status(200).json({ success: true, videos })
+            console.log("최종 : ", videos);
+            res.status(200).json({
+                success: true,
+                videos
+            })
         }); // .find().exec
 });
 
@@ -170,12 +168,12 @@ router.post('/updataViews', (req, res) => { // 조회수
     Video.findById(req.body.videoId)
         .populate("writer")
         .exec((err, doc) => {
-            if(err) return res.status(400).json({ success: false, err });
-            
+            if (err) return res.status(400).json({ success: false, err });
+
             doc.views++;
 
             doc.save((err) => {
-                if(err) return res.status(400).json({ success: false, err });
+                if (err) return res.status(400).json({ success: false, err });
             });
 
             res.status(200).json({ success: true, views: doc.views });
